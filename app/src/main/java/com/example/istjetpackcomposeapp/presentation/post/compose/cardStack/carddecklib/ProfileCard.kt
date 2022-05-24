@@ -3,6 +3,7 @@ package com.example.istjetpackcomposeapp.presentation.post.compose.cardStack.car
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -11,6 +12,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.istjetpackcomposeapp.R
 import com.example.istjetpackcomposeapp.presentation.post.compose.cardStack.Reward
@@ -25,7 +27,8 @@ fun UserProfileCard(
     Card(
         modifier = modifier
             .fillMaxSize(),
-        backgroundColor = Color.White
+        backgroundColor = Color.White,
+        shape = RoundedCornerShape(4.dp)
     ) {
 
         Box(
@@ -41,17 +44,14 @@ fun UserProfileCard(
             )
 
             Box(
-                modifier = Modifier
-                    .padding(70.dp),
                 contentAlignment = Alignment.Center
-
             ) {
 
                 Image(
                     painter = painterResource(id = R.drawable.bala_post),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(320.dp)
+                        .size(120.dp)
                         .aspectRatio(1f, matchHeightConstraintsFirst = true)
                         .padding(3.dp)
                         .clip(CircleShape),
@@ -62,13 +62,18 @@ fun UserProfileCard(
                     painter = painterResource(id = R.drawable.level),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(50.dp)
+                        .size(48.dp)
                         .align(Alignment.BottomEnd)
-                        .padding(end = 4.dp, bottom = 4.dp)
                 )
-
             }
         }
 
     }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun ProfilePreview(){
+    UserProfileCard()
 }

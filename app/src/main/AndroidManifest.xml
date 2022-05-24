@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.IstJetPackComposeApp">
         <activity
-            android:name=".presentation.post.compose.cardStack.RewardActivity"
+            android:name=".presentation.post.compose.ReferEarnLandingActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.IstJetPackComposeApp.NoActionBar">

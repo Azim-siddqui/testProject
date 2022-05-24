@@ -23,41 +23,22 @@ fun RewardCard(reward: Reward, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
             .fillMaxWidth(),
-        backgroundColor = Color.White
+        backgroundColor = Color.White,
+        shape = RoundedCornerShape(4.dp)
     ) {
 
             Box(
                 modifier = Modifier,
                 contentAlignment = Alignment.Center,
             ) {
-
-                Image(
-                    painter = painterResource(id = R.drawable.gift_preview_back),
-                    contentDescription = null,
-                    modifier = modifier
-                        .aspectRatio(1f, matchHeightConstraintsFirst = true)
-                )
-
-                Box(
-                    modifier = Modifier
-                        .padding(55.dp),
-                    contentAlignment = Alignment.Center
-
-                ) {
-
                     Image(
-                        painter = painterResource(id = reward.image),
+                        painter = painterResource(id = R.drawable.insta_user_profile),
                         contentDescription = null,
-                        modifier = Modifier
-                            .size(180.dp)
-                            .aspectRatio(1f, matchHeightConstraintsFirst = true)
-                            .padding(3.dp),
+                        modifier = modifier
+                            .aspectRatio(1f, matchHeightConstraintsFirst = true),
                         contentScale = ContentScale.Crop
                     )
-
-                }
             }
-
         }
 
 }

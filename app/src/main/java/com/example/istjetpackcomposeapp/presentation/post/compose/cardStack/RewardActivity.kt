@@ -32,6 +32,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
+import sharechat.library.composeui.common.carddecklib.DragState
 import sharechat.library.composeui.common.carddecklib.LazyCardStack
 import sharechat.library.composeui.common.carddecklib.LazyStackIndicator
 import sharechat.library.composeui.common.carddecklib.rememberDragManager
@@ -44,45 +45,68 @@ class RewardActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val profileList = mutableListOf<UserGift>(UserGift(profileThumb = R.drawable.bala_post, badgeThumb = R.drawable.level))
             val rewardList = listOf<Reward>(
                 Reward(
-                    image = R.drawable.post4,
+                    image = R.drawable.spin,
                     levelText = "Level 10",
                     message = "Congrats"
                 ),
+                Reward(
+                    image = R.drawable.crown_frame,
+                    levelText = "Level 10",
+                    message = "Congrats"
+                ),
+                Reward(
+                    image = R.drawable.reward_profile,
+                    levelText = "Level 10",
+                    message = "Congrats"
+                ),
+//                Reward(
+//                    image = R.drawable.reward_profile,
+//                    levelText = "Level 10",
+//                    message = "Congrats"
+//                ),
+//                Reward(
+//                    image = R.drawable.insta_user_profile,
+//                    levelText = "Level 10",
+//                    message = "Congrats"
+//                ),
+//                Reward(
+//                    image = R.drawable.reward_profile,
+//                    levelText = "Level 10",
+//                    message = "Congrats"
+//                ),
+//                Reward(
+//                    image = R.drawable.insta_user_profile,
+//                    levelText = "Level 10",
+//                    message = "Congrats"
+//                ),
+//                Reward(
+//                    image = R.drawable.insta_user_profile,
+//                    levelText = "Level 10",
+//                    message = "Congrats"
+//                ),
+//                Reward(
+//                    image = R.drawable.reward_profile,
+//                    levelText = "Level 10",
+//                    message = "Congrats"
+//                ),
                 Reward(
                     image = R.drawable.insta_user_profile,
                     levelText = "Level 10",
                     message = "Congrats"
-                ),
-//                Reward(
-//                    image = R.drawable.reward_profile,
-//                    levelText = "Level 10",
-//                    message = "Congrats"
-//                ),
-//                Reward(
-//                    image = R.drawable.reward_profile,
-//                    levelText = "Level 10",
-//                    message = "Congrats"
-//                ),
-//                Reward(
-//                    image = R.drawable.insta_user_profile,
-//                    levelText = "Level 10",
-//                    message = "Congrats"
-//                ),
-//                Reward(
-//                    image = R.drawable.reward_profile,
-//                    levelText = "Level 10",
-//                    message = "Congrats"
-//                ),
-//                Reward(
-//                    image = R.drawable.insta_user_profile,
-//                    levelText = "Level 10",
-//                    message = "Congrats"
-//                )
+                )
             )
-            RewardScreen(rewardList, profileList)
+            var userLevellist: MutableList<ChatRoomLevelUpgrade> = mutableListOf()
+            userLevellist.add(
+                UserGift(
+                    profileThumb = R.drawable.bala_post,
+                    badgeThumb = R.drawable.level
+                )
+            )
+            userLevellist.addAll(rewardList)
+            RewardScreen(userLevellist)
+
         }
     }
 }
@@ -90,11 +114,8 @@ class RewardActivity : ComponentActivity() {
 @ExperimentalPagerApi
 @ExperimentalMaterialApi
 @Composable
-fun RewardScreen(rewardList: List<Reward>, profileList: MutableList<UserGift>) {
+fun RewardScreen(rewardList: List<ChatRoomLevelUpgrade>) {
 
-    var userLevellist:MutableList<ChatRoomLevelUpgrade> = mutableListOf()
-    userLevellist.add(UserGift(profileThumb = R.drawable.bala_post, badgeThumb = R.drawable.level))
-    userLevellist.addAll(rewardList)
 
     Box(
         modifier = Modifier
@@ -159,7 +180,7 @@ fun RewardScreen(rewardList: List<Reward>, profileList: MutableList<UserGift>) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(20.dp),
+                .padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -171,74 +192,71 @@ fun RewardScreen(rewardList: List<Reward>, profileList: MutableList<UserGift>) {
 //                    .height(256.dp)
 //            )
 
-            if (rewardList.isNotEmpty()) {
-                if (rewardList.size > 1) {
-                    val config = LocalConfiguration.current
-                    val screenWidth = with(LocalDensity.current) {
-                        config.screenWidthDp.dp.toPx()
-                    }
+            HorizontalAutoScrollPager(
+                list = rewardList,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(256.dp)
+            )
 
-                    val scope = rememberCoroutineScope()
-                    val dragState = rememberDragManager(
-                        animationSpec = tween(durationMillis = 500),
-                        size = rewardList.size,
-                        maxCards = 3,
-                        scope = scope
-                    )
-                    LaunchedEffect(Unit) {
-                        var swipingLeft = true
-                        snapshotFlow {
-                            dragState.topDeckIndex.value
-                        }.map {
-                            delay(2000)
-                            if (it == 0) {
-                                swipingLeft = false
-                            } else if (it == rewardList.size - 1) {
-                                swipingLeft = true
-                            }
-                            it
-                        }.collect {
-                            if (swipingLeft) {
-                                dragState.swipeLeft()
-                            } else {
-                                dragState.swipeBack()
-                            }
-                        }
-                    }
-
-                    LazyCardStack(
-                        items = /*joined(rewardList,profileList)*/userLevellist,
-//                        primaryContent = {
-//                            UserProfileCard()
+//            if (rewardList.isNotEmpty()) {
+//                val scope = rememberCoroutineScope()
+//                val dragState = rememberDragManager(
+//                    animationSpec = tween(durationMillis = 500),
+//                    size = rewardList.size,
+//                    maxCards = 3,
+//                    scope = scope
+//                )
+//                LaunchedEffect(Unit) {
+//                    var swipingLeft = true
+//                    snapshotFlow {
+//                        dragState.topDeckIndex.value
+//                    }.map {
+//                        delay(2000)
+//                        if (it == 0) {
+//                            swipingLeft = false
+//                        } else if (it == rewardList.size - 1) {
+//                            swipingLeft = true
+//                        }
+//                        it
+//                    }.collect {
+//                        if (swipingLeft) {
+//                            dragState.swipeLeft()
+//                        } else {
+//                            dragState.swipeBack()
+//                        }
+//                    }
+//                }
+//
+//                LazyCardStack(
+//                    items = rewardList as MutableList<ChatRoomLevelUpgrade>,
+//                    content = {
+//                        getLevelUpgradeView(it)
+//                    },
+//                    maxElements = 3,
+//                    modifier = Modifier.size(320.dp),
+//                    cornerShape = RoundedCornerShape(16.dp),
+//                    isDragEnable = true,
+//                    dragState = dragState,
+//                    elevation = 5.dp,
+//                    scope = scope
+//                )
+//                if (rewardList.size > 1) {
+//                    LazyStackIndicator(
+//                        dragState = dragState,
+//                        count = when (rewardList.size) {
+//                            in 2..3 -> rewardList.size
+//                            else -> 3
 //                        },
-                        content = {
-                            //RewardCard(reward = it as Reward)
-                            getLevelUpgradeView(it)
-                        },
-                        maxElements = 3,
-                        modifier = Modifier.size(350.dp),
-                        cornerShape = RoundedCornerShape(5.dp),
-                        isDragEnable = false,
-                        dragState = dragState,
-                        elevation = 5.dp,
-                        scope = scope
-                    )
-                    LazyStackIndicator(
-                        dragState = dragState,
-                        count = when (rewardList.size+1) {
-                            in 2..3 -> rewardList.size+1
-                            else -> 3
-                        },
-                        activeColor = Color.White
-                    )
-                } else {
-                    UserProfileCard(
-                        modifier = Modifier
-                            .size(350.dp)
-                            .padding(start = 25.dp, end = 25.dp, top = 52.dp)
-                    )
-                }
-            }
+//                        activeColor = Color.White
+//                    )
+//                }
+//                else{
+//                    Spacer(modifier = Modifier.height(10.dp))
+//                }
+//
+//            }
+
 
 //            LazyCardStack(
 //                items = rewardList as MutableList<Reward>,
@@ -264,7 +282,7 @@ fun RewardScreen(rewardList: List<Reward>, profileList: MutableList<UserGift>) {
 //                inactiveColor = colorResource(id = R.color.light_secondary)
 //            )
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = "Level 10",
                 color = Color.White,
@@ -280,7 +298,7 @@ fun RewardScreen(rewardList: List<Reward>, profileList: MutableList<UserGift>) {
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Button(
                 onClick = {},
                 modifier = Modifier
@@ -352,7 +370,7 @@ private fun DefaultPreview() {
             message = "Congrats"
         )
     )
-   // RewardScreen(rewardList, profileList)
+    // RewardScreen(rewardList, profileList)
 }
 
 fun <T, U> joined(first: List<T>, second: List<U>): MutableList<Any> {
@@ -364,14 +382,14 @@ fun <T, U> joined(first: List<T>, second: List<U>): MutableList<Any> {
 
 
 @Composable
-fun getLevelUpgradeView(chatRoomLevelUpgrade: ChatRoomLevelUpgrade) : Unit{
+fun getLevelUpgradeView(chatRoomLevelUpgrade: ChatRoomLevelUpgrade, modifier: Modifier = Modifier): Unit {
     Log.e("chatRoomLevelUpgrade", "kjhjkssa")
-    return when(chatRoomLevelUpgrade){
+    return when (chatRoomLevelUpgrade) {
         is Reward -> {
-            RewardCard(reward = chatRoomLevelUpgrade)
+            RewardCard(reward = chatRoomLevelUpgrade, modifier = modifier)
         }
         is UserGift -> {
-            UserProfileCard()
+            UserProfileCard(modifier = modifier)
         }
     }
 }

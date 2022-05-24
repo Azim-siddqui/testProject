@@ -54,106 +54,106 @@ fun <T> LazyCardStack(
     scope: CoroutineScope = rememberCoroutineScope(),
     content: @Composable (T) -> Unit
 ) {
-    val dragManager = dragState ?: rememberDragManager(
-        size = items.size,
-        maxCards = maxElements,
-        scope = scope
-    )
-    Column(
-        modifier = modifier,
-        verticalArrangement = verticalArrangement,
-        horizontalAlignment = horizontalAlignment
-    ) {
-        BoxWithConstraints(
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .fillMaxHeight(0.8f)
-                .pointerInput(Unit) {
-                    detectDragGestures(
-                        onDragEnd = {
-                            if (isDragEnable.not()) return@detectDragGestures
-                            dragManager.onDragEnd(
-                                index = dragManager.topDeckIndex.value,
-                                selectedIndex = dragManager.topDeckIndex.value
-                            )
-                        },
-                        onDrag = { change, dragAmount ->
-                            if (isDragEnable.not()) return@detectDragGestures
-                            change.consumePositionChange()
-                            if (dragAmount.x > 0 || dragManager.topDeckIndex.value == 0) {
-                                dragManager.dragRight(
-                                    dragAmount = dragAmount
-                                )
-                            } else {
-                                dragManager.dragLeft(
-                                    dragAmount = dragAmount
-                                )
-                            }
-                        }
-                    )
-                },
-            contentAlignment = Alignment.Center
+    if(items.size>1){
+        val dragManager = dragState ?: rememberDragManager(
+            size = items.size,
+            maxCards = maxElements,
+            scope = scope
+        )
+        Column(
+            modifier = modifier,
+            verticalArrangement = verticalArrangement,
+            horizontalAlignment = horizontalAlignment
         ) {
-            val density = LocalDensity.current
-            LaunchedEffect(key1 = Unit, block = {
-                dragManager.setBoxWidth(with(density) { maxWidth.value.dp.toPx() })
-            })
-            val visibleIndexRange =
-                (items.size - 1 downTo (dragManager.topDeckIndex.value - maxElements).coerceAtLeast(
-                    0
-                )).map { it }
-
-
-//            val combinedList = joined(items, primaryItems)
-//            Log.i("joinList", "LazyCardStack: $combinedList")
-
-
-            Log.i("size", "LazyCardStack: ${items.size}")
-            items.forEachIndexed { index, item ->
-                if (dragManager.listOfDragState.isNotEmpty()) {
-                    var swipeState: DragState? = null
-                    if (index < items.size - 1) {
-                        swipeState = dragManager.listOfDragState[index]
-                    }
-                    if (index in visibleIndexRange) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .graphicsLayer {
-                                    scaleY = swipeState?.scale?.value ?: 1f
-                                    scaleX = swipeState?.scale?.value ?: 1f
-                                    translationX = swipeState?.offsetX?.value ?: 0f
+            BoxWithConstraints(
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .fillMaxHeight(0.8f)
+                    .pointerInput(Unit) {
+                        detectDragGestures(
+                            onDragEnd = {
+                                if (isDragEnable.not()) return@detectDragGestures
+                                dragManager.onDragEnd(
+                                    index = dragManager.topDeckIndex.value,
+                                    selectedIndex = dragManager.topDeckIndex.value
+                                )
+                            },
+                            onDrag = { change, dragAmount ->
+                                if (isDragEnable.not()) return@detectDragGestures
+                                change.consumePositionChange()
+                                if (dragAmount.x > 0 || dragManager.topDeckIndex.value == 0) {
+                                    dragManager.dragRight(
+                                        dragAmount = dragAmount
+                                    )
+                                } else {
+                                    dragManager.dragLeft(
+                                        dragAmount = dragAmount
+                                    )
                                 }
-                                .shadow(elevation = elevation, shape = cornerShape),
-                        ) {
-                            Box(modifier = Modifier.fillMaxSize()) {
-                                Log.i("xyz", "LazyCardStack: $item")
+                            }
+                        )
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                val density = LocalDensity.current
+                LaunchedEffect(key1 = Unit, block = {
+                    dragManager.setBoxWidth(with(density) { maxWidth.value.dp.toPx() })
+                })
+                val visibleIndexRange =
+                    (items.size - 1 downTo (dragManager.topDeckIndex.value - maxElements).coerceAtLeast(
+                        0
+                    )).map { it }
 
-                                if(item is Reward){
+
+                items.asReversed().forEachIndexed { index, item ->
+                    if (dragManager.listOfDragState.isNotEmpty()) {
+                        val swipeState = dragManager.listOfDragState[index]
+                        if (index in visibleIndexRange) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .graphicsLayer {
+                                        scaleY = swipeState.scale.value
+                                        scaleX = swipeState.scale.value
+                                        translationX = swipeState.offsetX.value
+
+                                    }
+                                    .shadow(elevation = elevation, shape = cornerShape),
+                            ) {
+                                Box(modifier = Modifier.fillMaxSize()) {
                                     content(
                                         item
                                     )
                                 }
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .alpha(alpha = swipeState.opacity.value)
+                                        .background(
+                                            color = Color.White,
+                                            shape = cornerShape
+                                        )
+                                )
                             }
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .alpha(alpha = swipeState?.opacity?.value ?: 1f)
-                                    .background(
-                                        color = Color.White,
-                                        shape = cornerShape
-                                    )
-                            )
                         }
                     }
                 }
+
             }
 
+
         }
-
-
     }
-
+    if (items.size > 0 && items.size == 1) {
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            content(
+                items[0]
+            )
+        }
+    }
 }
 
 //fun <T, U> joined(first: List<T>, second: List<U>): List<Any> {

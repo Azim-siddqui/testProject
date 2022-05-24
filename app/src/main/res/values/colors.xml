@@ -8,5 +8,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="btn_bg">#577EFB</color>
+    <color name="orangish">#FEB717</color>
     <color name="light_secondary">#74747B</color>
+    <color name="heading">#32323E</color>
+    <color name="sub_heading">#74747B</color>
+    <color name="light_image">#B83171</color>
 </resources>
